@@ -86,6 +86,16 @@ const data = [
     thirdParagraph: `Hodor hodor - hodor... Hodor hodor hodor hodor. Hodor. Hodor! Hodor hodor, hodor hodor hodor hodor hodor; hodor hodor? Hodor!
           Hodor hodor, HODOR hodor, hodor hodor?! Hodor! Hodor hodor, HODOR hodor, hodor hodor, hodor, hodor hodor. Hodor, hodor.
           Hodor. Hodor, hodor, hodor. Hodor hodor... Hodor hodor hodor?! Hodor, hodor... Hodor hodor HODOR hodor, hodor hodor. Hodor.`
+  },
+
+  {
+    title: 'Rhea\'s library',
+    date: 'September 2nd, 2020',
+    firstParagraph: `Dragée sweet roll gingerbread. Halvah marshmallow gummi bears powder. Ice cream tart gummies. Marshmallow lollipop gingerbread. Jelly marshmallow marshmallow cake biscuit bonbon pie. Candy canes jelly-o cotton candy carrot cake sweet marshmallow sweet sweet. Gummi bears jelly beans brownie halvah tootsie roll icing wafer powder. Tootsie roll cookie icing dessert toffee.`,
+
+    secondParagraph: `Ice cream pudding pie ice cream gummies. Lollipop sesame snaps chocolate cake cupcake jelly-o sweet. Tiramisu carrot cake danish topping fruitcake jelly beans jelly-o lemon drops gingerbread. Sugar plum cookie sugar plum biscuit. Cupcake gingerbread sweet roll. `,
+
+    thirdParagraph: `Topping jelly-o dessert. Liquorice lollipop tootsie roll topping ice cream cupcake powder cheesecake gummi bears. Cake soufflé oat cake cake marshmallow icing pie dragée. Gummi bears cake bear claw. Candy canes gingerbread pie muffin. Marshmallow candy canes cheesecake. Chocolate cake tart liquorice candy jelly muffin chocolate cake macaroon cheesecake.`
   }
 ];
 
@@ -93,24 +103,84 @@ const data = [
   Step 1: Write a component called 'articleMaker' to create an article.
   Your component is a function that takes an article object as its only argument,
   and returns a DOM node looking like the one below:
-
   <div class="article">
     <h2>{title of the article}</h2>
     <p class="date">{date of the article}</p>
-
     {three separate paragraph elements}
-
     <span class="expandButton">+</span>
   </div>
-
   Step 2: Still inside `articleMaker`, add an event listener to the span.expandButton.
   This listener should toggle the class 'article-open' on div.article.
-
   Step 3: Don't forget to return something from your function!
-
   Step 4: Outside your function now, loop over the data. At each iteration you'll use your component
   to create a div.article element and append it to the DOM inside div.articles (see index.html).
-
   Step 5: Try adding new article object to the data array. Make sure it is in the same format as the others.
   Refresh the page to see the new article.
 */
+function articleMaker(article) {
+
+  // Created the div and added the appropriate elements. 
+  const parentPanel = document.createElement('div')
+  parentPanel.className="article"
+
+  // Convert the object values into an array so it can be looped through easily.
+  const allChildren = Object.values(article)
+
+  // Make another array that matches the element tags of the pattern.
+  const types = ['h2', 'p', 'p', 'p', 'p']
+  createChildren()
+
+  // Loop through all the elements and add the text content.
+  function createChildren() {
+    for (let i = 0; i < types.length; i++) {
+      const toAdd = document.createElement(types[i])
+      toAdd.textContent = allChildren[i]
+
+      parentPanel.appendChild(toAdd)
+    }
+  }
+
+  // Add the appropriare class to date.
+  parentPanel.querySelector('p').classList.add('date')
+
+  // Create the span with appropriate text content and class.
+  const span = document.createElement('span')
+  span.textContent = "+"
+  span.classList.add("expandButton")
+
+  // Add the span to the parent.
+  parentPanel.appendChild(span)
+  
+  // Add the click event which toggles the classes.
+  span.addEventListener('click', function(){
+
+    // STRETCH GOAL: Added gsap animations for when the button is clicked: A flickering fade effect.
+    gsap.from(parentPanel, {opacity:0, duration:1, })
+    gsap.to(parentPanel, {opacity:1, duration:1, })
+
+    // Toggle the class name.
+    parentPanel.classList.toggle("article-open")
+    
+  })
+
+  // STRETCH GOAL: Added gsap animation for when the button is hovered: makes the button bigger and easier to see with a soft linear effect.
+  span.addEventListener('mouseover', function(){
+    gsap.to(span,{duration:.5, scale:3})
+  })
+
+  // STRETCH GOAL: Resets the button to original size one the button isn't hovered anymore with a soft linear effect.
+  span.addEventListener('mouseleave', function(){
+    gsap.to(span,{duration:.5,scale:1})
+  })
+
+  return parentPanel
+}
+
+// Get parent articles div
+const parentDiv = document.querySelector('.articles')
+
+// Loop through all the newly created articles and adds it to the parent div.
+for (let i = 0; i < data.length; i++) {
+  const newArticle = articleMaker(data[i])
+  parentDiv.appendChild(newArticle)
+}
